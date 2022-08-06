@@ -50,4 +50,42 @@ registerRouter.post("/signup", async (req, res) => {
 	}
 });
 
+registerRouter.post("/login", async (req, res) => {
+	const { email, password } = req.body;
+
+	let [rows, fields] = await await pool.query(
+		"SELECT * FROM `user` WHERE `user`.`email` = ?",
+		[email]
+	);
+
+	const user = rows[0];
+
+	if (user == undefined) {
+		return res.json({
+			status: "error",
+			error: "Invalid email or password",
+		});
+	}
+
+	const result = await bcrypt.compare(password, user.password);
+
+	if (await bcrypt.compare(password, user.password)) {
+		const token = jwt.sign(
+			{ id: user.userId, email: user.email, name: user.name },
+			process.env.JWT_SECRET,
+			{ noTimestamp: true, expiresIn: "24h" }
+		);
+
+		const data = {
+			name: user.name,
+			email: user.email,
+			token: token,
+		};
+
+		return res.json({ status: "ok", data: data });
+	}
+
+	return res.json({ status: "error", error: "Invalid email or password" });
+});
+
 module.exports = registerRouter;

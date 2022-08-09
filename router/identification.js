@@ -67,11 +67,9 @@ registerRouter.post("/login", async (req, res) => {
 		});
 	}
 
-	const result = await bcrypt.compare(password, user.password);
-
 	if (await bcrypt.compare(password, user.password)) {
 		const token = jwt.sign(
-			{ id: user.userId, email: user.email, name: user.name },
+			{ user_id: user.user_id, email: user.email, name: user.name },
 			process.env.JWT_SECRET,
 			{ noTimestamp: true, expiresIn: "24h" }
 		);

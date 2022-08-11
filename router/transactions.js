@@ -33,12 +33,12 @@ transactionsRouter.post("/", async (req, res) => {
 	try {
 		let user = jwt.verify(token, process.env.JWT_SECRET);
 
-		await pool.query(
+		const [rows, fields] = await pool.query(
 			"INSERT INTO `transaction` (`id`, `description`, `amount`, `date`, `category_id`, `user_id`) VALUES (NULL, ?, ?, ?, ?, ?);",
 			[description, amount, date, categoryId, user.user_id]
 		);
 
-		res.json({ status: "ok" });
+		res.json({ status: "ok", transactionId: rows.insertId });
 	} catch (err) {
 		return res.json({ status: "error", error: ";))" });
 	}

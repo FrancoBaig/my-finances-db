@@ -13,14 +13,14 @@ categoriesRouter.get("/:year/:month", async (req, res) => {
 
 		// Get incomes
 		const [incomes, fields] = await pool.query(
-			"SELECT c.id, c.title, CAST(SUM(CASE WHEN YEAR(t.date) = 2022 AND MONTH(t.date) = 08 THEN t.amount ELSE 0 END) AS INTEGER) AS value FROM category c LEFT JOIN transaction t ON t.category_id = c.id WHERE c.user_id = 12 AND c.category_type_id = 1 GROUP BY c.id",
+			"SELECT c.id, c.title, CAST(SUM(CASE WHEN YEAR(t.date) = ? AND MONTH(t.date) = ? THEN t.amount ELSE 0 END) AS INTEGER) AS value FROM category c LEFT JOIN transaction t ON t.category_id = c.id WHERE c.user_id = 12 AND c.category_type_id = 1 GROUP BY c.id",
 			[year, month, user.user_id, category_type]
 		);
 
 		// Get expenses
 		category_type = 2;
 		const [expenses, field] = await pool.query(
-			"SELECT c.id, c.title, CAST(SUM(CASE WHEN YEAR(t.date) = 2022 AND MONTH(t.date) = 08 THEN t.amount ELSE 0 END) AS INTEGER) AS value FROM category c LEFT JOIN transaction t ON t.category_id = c.id WHERE c.user_id = 12 AND c.category_type_id = 2 GROUP BY c.id",
+			"SELECT c.id, c.title, CAST(SUM(CASE WHEN YEAR(t.date) = ? AND MONTH(t.date) = ? THEN t.amount ELSE 0 END) AS INTEGER) AS value FROM category c LEFT JOIN transaction t ON t.category_id = c.id WHERE c.user_id = 12 AND c.category_type_id = 2 GROUP BY c.id",
 			[year, month, user.user_id, category_type]
 		);
 

@@ -10,13 +10,13 @@ transactionsRouter.get("/", async (req, res) => {
 		let user = jwt.verify(token, process.env.JWT_SECRET);
 		if (limit) {
 			const [row, fields] = await pool.query(
-				"SELECT `id`, `description`, `amount`, `date`, `category_id` FROM `transaction` WHERE `user_id` = ? LIMIT ?",
+				"SELECT `id`, `description`, `amount`, `date`, `category_id` FROM `transaction` WHERE `user_id` = ? ORDER BY `transaction`.`id` DESC LIMIT ?",
 				[user.user_id, limit]
 			);
 			res.status(200).json(row);
 		} else {
 			const [row, fields] = await pool.query(
-				"SELECT * FROM `transaction` WHERE `user_id` = ?",
+				"SELECT * FROM `transaction` WHERE `user_id` = ? ORDER BY `transaction`.`id` DESC",
 				[user.user_id]
 			);
 			res.status(200).json(row);

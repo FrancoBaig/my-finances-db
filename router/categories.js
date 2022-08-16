@@ -11,6 +11,12 @@ categoriesRouter.get("/:year/:month", async (req, res) => {
 		let user = jwt.verify(token, process.env.JWT_SECRET);
 		let category_type = 1;
 
+		// Get initial balance
+		const [row, fiel] = await pool.query(
+			"SELECT CAST(SUM(t.amount) AS INTEGER) AS initial FROM transaction t WHERE t.user_id = ? AND MONTH(t.date) < ? AND YEAR(t.date) <= ?",
+			[user.user_id, month, year]
+		);
+
 		// Get incomes
 		const [incomes, fields] = await pool.query(
 			"SELECT c.id, c.title, CAST(SUM(CASE WHEN YEAR(t.date) = ? AND MONTH(t.date) = ? THEN t.amount ELSE 0 END) AS INTEGER) AS value FROM category c LEFT JOIN transaction t ON t.category_id = c.id WHERE c.user_id = 12 AND c.category_type_id = 1 GROUP BY c.id",
@@ -25,6 +31,7 @@ categoriesRouter.get("/:year/:month", async (req, res) => {
 		);
 
 		const result = {
+			initial: row[0].initial,
 			incomes: [...incomes],
 			expenses: [...expenses],
 		};

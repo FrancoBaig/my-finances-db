@@ -44,4 +44,22 @@ transactionsRouter.post("/", async (req, res) => {
 	}
 });
 
+transactionsRouter.put("/", async (req, res) => {
+	const { id, amount, description, date } = req.body;
+	const token = req.get("authorization");
+
+	try {
+		let user = jwt.verify(token, process.env.JWT_SECRET);
+
+		await pool.query(
+			"UPDATE transaction SET description = ?, amount = ?, date = ? WHERE user_id = ? AND id = ?",
+			[description, amount, date, user.user_id, id]
+		);
+
+		res.json({ status: "ok" });
+	} catch (err) {
+		return res.json({ status: "error", error: ";))" });
+	}
+});
+
 module.exports = transactionsRouter;

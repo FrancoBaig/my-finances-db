@@ -44,8 +44,9 @@ transactionsRouter.post("/", async (req, res) => {
 	}
 });
 
-transactionsRouter.put("/", async (req, res) => {
-	const { id, amount, description, date } = req.body;
+transactionsRouter.put("/:id", async (req, res) => {
+	const id = req.params.id;
+	const { amount, description, date } = req.body;
 	const token = req.get("authorization");
 
 	try {

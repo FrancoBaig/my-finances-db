@@ -62,4 +62,22 @@ transactionsRouter.put("/", async (req, res) => {
 	}
 });
 
+transactionsRouter.delete("/:id", async (req, res) => {
+	const id = req.params.id;
+	const token = req.get("authorization");
+
+	try {
+		let user = jwt.verify(token, process.env.JWT_SECRET);
+
+		await pool.query(
+			"DELETE FROM transaction WHERE user_id = ? AND id = ?",
+			[user.user_id, id]
+		);
+
+		res.json({ status: "ok" });
+	} catch (err) {
+		return res.json({ status: "error", error: ";))" });
+	}
+});
+
 module.exports = transactionsRouter;

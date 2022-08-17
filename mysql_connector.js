@@ -6,6 +6,9 @@ const pool = mysql.createPool({
 	user: process.env.USER,
 	database: process.env.DB,
 	password: process.env.PASSWORD,
+	ssl: {
+		rejectUnauthorized: false,
+	},
 	waitForConnections: true,
 	connectionLimit: 10,
 	queueLimit: 0,
